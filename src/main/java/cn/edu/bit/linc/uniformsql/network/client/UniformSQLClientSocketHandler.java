@@ -98,6 +98,7 @@ public class UniformSQLClientSocketHandler implements ClientSocketHandler {
             closeable.close();
         } catch (IOException e) {
             // TODO: do something
+            Log.error("Close stream failed", e);
         } finally { /* we tried! */ }
     }
 }

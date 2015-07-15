@@ -72,7 +72,7 @@ public class HandShakePacket extends BasePacket {
         // 获取 varLen
         varLen = 1;
         int currentPos = OFFSET_SERVER_VERSION;
-        while(currentPos < _data_.length && _data_[currentPos++] != 0){
+        while (currentPos < _data_.length && _data_[currentPos++] != 0) {
             varLen++;
         }
     }

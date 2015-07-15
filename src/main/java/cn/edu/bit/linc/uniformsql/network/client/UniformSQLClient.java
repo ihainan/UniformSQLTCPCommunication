@@ -1,7 +1,5 @@
 package cn.edu.bit.linc.uniformsql.network.client;
 
-import cn.edu.bit.linc.uniformsql.network.server.UniformSQLServerSocketHandlerFactory;
-
 import java.io.IOException;
 import java.net.Socket;
 
@@ -42,7 +40,7 @@ public class UniformSQLClient {
      * Uniform SQL Server 构建器
      */
     public static class Builder {
-        private Integer port;             // 服务器端口
+        private Integer port;         // 服务器端口
         private String serverHost;    // 服务器地址
         private ClientSocketHandlerFactory socketHandlerFactory;
 
