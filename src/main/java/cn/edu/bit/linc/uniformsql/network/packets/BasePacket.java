@@ -3,7 +3,7 @@ package cn.edu.bit.linc.uniformsql.network.packets;
 import java.util.Arrays;
 
 /**
- * 所有数据包的基类，提供通用方法¬
+ * 所有数据包的基类，提供通用方法
  */
 public abstract class BasePacket {
     /**
