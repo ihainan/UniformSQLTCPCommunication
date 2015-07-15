@@ -14,7 +14,7 @@ import cn.edu.bit.linc.uniformsql.network.utils.*;
 public class UniformSQLServer {
     private final int port;
     private final int timeout;
-    private final SocketHandlerFactory socketHandlerFactory;
+    private final ServerSocketHandlerFactory socketHandlerFactory;
     private final ExecutorService handlerService = Executors.newCachedThreadPool();
 
     /**
@@ -24,7 +24,7 @@ public class UniformSQLServer {
      * @param timeout              Socket 连接超时
      * @param socketHandlerFactory Socket Handler 工厂
      */
-    private UniformSQLServer(int port, int timeout, SocketHandlerFactory socketHandlerFactory) {
+    private UniformSQLServer(int port, int timeout, ServerSocketHandlerFactory socketHandlerFactory) {
         this.port = port;
         this.timeout = timeout;
         this.socketHandlerFactory = socketHandlerFactory;
@@ -43,7 +43,7 @@ public class UniformSQLServer {
 
         while (true) {
             Socket clientSocket = serverSocket.accept();
-            final SocketHandler handler = socketHandlerFactory.newSocketHandler(clientSocket);
+            final ServerSocketHandler handler = socketHandlerFactory.newSocketHandler(clientSocket);
 
             handlerService.submit(new Runnable() {
                 @Override
@@ -65,7 +65,7 @@ public class UniformSQLServer {
     public static class Builder {
         private Integer port;
         private Integer timeout;
-        private SocketHandlerFactory socketHandlerFactory;
+        private ServerSocketHandlerFactory socketHandlerFactory;
 
         /**
          * 配置超时时长
@@ -95,7 +95,7 @@ public class UniformSQLServer {
          * @param socketHandlerFactory Socket Handler 工厂
          * @return Builder
          */
-        public Builder withSocketHandlerFactory(SocketHandlerFactory socketHandlerFactory) {
+        public Builder withSocketHandlerFactory(ServerSocketHandlerFactory socketHandlerFactory) {
             this.socketHandlerFactory = socketHandlerFactory;
             return this;
         }
@@ -122,7 +122,7 @@ public class UniformSQLServer {
     public static void main(String[] args) throws IOException {
         int port = 9527;
         int timeout = 100000;
-        UniformSQLSocketHandlerFactory uniformSQLSocketHandlerFactory = new UniformSQLSocketHandlerFactory();
+        UniformSQLServerSocketHandlerFactory uniformSQLSocketHandlerFactory = new UniformSQLServerSocketHandlerFactory();
 
         UniformSQLServer server = new UniformSQLServer
                 .Builder()

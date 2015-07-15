@@ -3,9 +3,9 @@ package cn.edu.bit.linc.uniformsql.network.server;
 import java.io.IOException;
 
 /**
- * Socket handler
+ * Server Socket handler
  */
-public interface SocketHandler {
+public interface ServerSocketHandler {
     /**
      * 控制 Socket 连接
      * @throws IOException 获取 InputStream 或者 OutputStream 失败

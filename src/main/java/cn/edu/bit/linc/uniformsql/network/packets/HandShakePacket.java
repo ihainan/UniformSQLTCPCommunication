@@ -65,6 +65,18 @@ public class HandShakePacket extends BasePacket {
         super(size);
     }
 
+    @Override
+    public void setData(byte[] data) {
+        super.setData(data);
+
+        // 获取 varLen
+        varLen = 1;
+        int currentPos = OFFSET_SERVER_VERSION;
+        while(currentPos < _data_.length && _data_[currentPos++] != 0){
+            varLen++;
+        }
+    }
+
     /**
      * 设置协议版本字段
      *

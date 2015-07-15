@@ -13,9 +13,9 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 /**
- * 统一 SQL 系统 Socket Handler，用于接收和发送请求
+ * 统一 SQL 系统 Server Socket Handler，用于接收和发送请求
  */
-public class UniformSQLSocketHandler implements SocketHandler {
+public class UniformSQLServerSocketHandler implements ServerSocketHandler {
     private final int id;
     private final Socket clientSocket;
 
@@ -25,7 +25,7 @@ public class UniformSQLSocketHandler implements SocketHandler {
      * @param id           Socket 连接编号
      * @param clientSocket 客户端 Socket
      */
-    public UniformSQLSocketHandler(int id, Socket clientSocket) {
+    public UniformSQLServerSocketHandler(int id, Socket clientSocket) {
         this.id = id;
         this.clientSocket = clientSocket;
     }
@@ -40,11 +40,8 @@ public class UniformSQLSocketHandler implements SocketHandler {
     public void handleSocket() throws IOException {
         Log.info(clientSocket.getInetAddress() + " has been connected to server with ID " + id);
 
-        InputStream in;
-        OutputStream out;
-
-        in = clientSocket.getInputStream();
-        out = clientSocket.getOutputStream();
+        InputStream in = clientSocket.getInputStream();
+        OutputStream out = clientSocket.getOutputStream();
 
         // TODO: 发送握手数据包
         Packet handShakePacket = null;
