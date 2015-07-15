@@ -82,12 +82,32 @@ public class Packet extends BasePacket {
      *
      * @param args 程序参数
      */
-    public static void main(String[] args) {
-        // 字段值
+    public static void main(String[] args) throws PacketExceptions.NecessaryFieldNotSetException {
+        // Header
         PacketHeader packetHeader = new PacketHeader(4);
         packetHeader.setPacketLength(5);
         packetHeader.setPacketID((byte) 1);
-        byte[] body = new byte[]{1, 2, 3, 4, 5};
+        byte protocolVersion = 2;
+        String serverVersion = "Version 0.1";
+        int threadID = 3;
+        byte[] unknownFiledOne = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
+        int serverCapabilities = 4;
+        byte characterSet = 5;
+        int serverStatus = 6;
+        byte[] unknownFiledTwo = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+
+        // Body
+        HandShakePacket handShakePacket = new HandShakePacket(serverVersion.getBytes().length + 1 + 45);
+        handShakePacket.setProtocolVersion(protocolVersion);
+        handShakePacket.setServerVersion(serverVersion);
+        handShakePacket.setThreadID(threadID);
+        handShakePacket.setUnknownFieldOne(unknownFiledOne);
+        handShakePacket.setServerCapabilities(serverCapabilities);
+        handShakePacket.setCharacterSet(characterSet);
+        handShakePacket.setServerStatus(serverStatus);
+        handShakePacket.setUnknownFieldTwo(unknownFiledTwo);
+        byte[] body = new byte[handShakePacket.getSize()];
+        handShakePacket.getData(body);
 
         // 构造包
         Packet packet = new Packet(packetHeader.getSize() + body.length);
@@ -101,4 +121,10 @@ public class Packet extends BasePacket {
         System.out.println(packetHeader.getPacketID());
         System.out.println(Arrays.toString(packet.getPacketBody()));
     }
+    /* Output
+    [0, 0, 5, 1, 2, 86, 101, 114, 115, 105, 111, 110, 32, 48, 46, 49, 0, 0, 0, 0, 3, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 4, 5, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    5
+    1
+    [2, 86, 101, 114, 115]
+     */
 }

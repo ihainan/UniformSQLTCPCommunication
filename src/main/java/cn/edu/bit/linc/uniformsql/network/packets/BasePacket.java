@@ -69,15 +69,32 @@ public abstract class BasePacket {
         return Arrays.toString(_data_);
     }
 
-    public void setBytes(byte[] bytes, int offset, int length, int data){
-        for(int i = 0; i < length; ++i){
-            bytes[offset + i] = (byte)((data >> ((length - i - 1) * 8)) & 0xff);
+
+    /**
+     * 赋值 byte 数组中的某几个连续元素
+     *
+     * @param bytes  需要赋值的 byte 数组
+     * @param offset 起始位置在数组中的偏移量
+     * @param length 元素的个数
+     * @param data   需要赋值的整数值
+     */
+    public void setBytes(byte[] bytes, int offset, int length, int data) {
+        for (int i = 0; i < length; ++i) {
+            bytes[offset + i] = (byte) ((data >> ((length - i - 1) * 8)) & 0xff);
         }
     }
 
-    public int getInt(byte[] bytes, int offset, int length){
+    /**
+     * 将 byte 数组转换成整数并返回
+     *
+     * @param bytes  需要转换的 byte 数组
+     * @param offset 起始位置在数组中的偏移量
+     * @param length 转换的长度
+     * @return 转换得到的整数
+     */
+    public int getIntFromBytes(byte[] bytes, int offset, int length) {
         int data = 0;
-        for(int i = 0; i < length; ++i){
+        for (int i = 0; i < length; ++i) {
             data += ((bytes[offset + i] & 0xff) << (8 * (length - i - 1)));
         }
         return data;
