@@ -11,6 +11,15 @@ public class StringType extends BasicType {
     }
 
     /**
+     * 构造函数
+     *
+     * @param size 数据大小
+     */
+    protected StringType(int size) {
+        super(size);
+    }
+
+    /**
      * 获取一个 StringType 实例
      *
      * @param str 存储的字符串
@@ -27,6 +36,18 @@ public class StringType extends BasicType {
 
         // 填充
         stringType.setData(bytesWithNull);
+        return stringType;
+    }
+
+    /**
+     * 从原始数据中获取得到一个 StringType 实例
+     *
+     * @param data 原始数据
+     * @return StringType 实例
+     */
+    public static StringType getStringType(byte[] data) {
+        StringType stringType = new StringType(data.length);
+        stringType.setData(data);
         return stringType;
     }
 

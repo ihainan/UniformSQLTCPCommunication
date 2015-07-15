@@ -12,6 +12,15 @@ public class IntegerType extends BasicType {
     }
 
     /**
+     * 构造函数
+     *
+     * @param size 数据大小
+     */
+    protected IntegerType(int size) {
+        super(size);
+    }
+
+    /**
      * 获取 IntegerType 对应的整型值
      *
      * @param integerType IntegerType 实例
@@ -52,6 +61,18 @@ public class IntegerType extends BasicType {
         fillByteArray(data, size, value);
 
         IntegerType integerType = new IntegerType();
+        integerType.setData(data);
+        return integerType;
+    }
+
+    /**
+     * 从原始数据中获取得到一个 IntegerType 实例
+     *
+     * @param data 原始数据
+     * @return IntegerType 实例
+     */
+    public static IntegerType getIntegerType(byte[] data) {
+        IntegerType integerType = new IntegerType(data.length);
         integerType.setData(data);
         return integerType;
     }

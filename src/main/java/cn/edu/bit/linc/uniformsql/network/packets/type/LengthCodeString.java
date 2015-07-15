@@ -51,7 +51,6 @@ public class LengthCodeString extends LengthCodeBinaryType {
         LengthCodeString lengthCodeString = getLengthCodeString(str);
         System.out.println(getString(lengthCodeString));
     }
-    
     /* Output:
        Hello World
      */

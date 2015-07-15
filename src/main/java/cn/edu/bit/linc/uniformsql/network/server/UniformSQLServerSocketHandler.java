@@ -4,7 +4,9 @@ import cn.edu.bit.linc.uniformsql.network.packets.HandShakePacket;
 import cn.edu.bit.linc.uniformsql.network.packets.Packet;
 import cn.edu.bit.linc.uniformsql.network.packets.PacketExceptions;
 import cn.edu.bit.linc.uniformsql.network.packets.PacketHeader;
+import cn.edu.bit.linc.uniformsql.network.packets.type.StringType;
 import cn.edu.bit.linc.uniformsql.network.utils.Log;
+import org.apache.commons.lang.RandomStringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -92,42 +94,42 @@ public class UniformSQLServerSocketHandler implements ServerSocketHandler {
      */
     private Packet buildHandShakePacket() throws PacketExceptions.NecessaryFieldNotSetException {
         /* 构建握手包 */
+
         // TODO: 从系统全局变量中读取协议版本和服务器版本
-        byte protocolVersion = 1;               // 协议版本
-        String serverVersion = "Version 0.1";   // 服务器版本
-        int threadID = (int) Thread.currentThread().getId();            // 线程 ID
-        // TODO: 配置未知区域
-        byte[] unknownFiledOne = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9}; // 不明区域一
-        // TODO: 定义服务器权能
-        int serverCapabilities = 4;             // 服务器权能
-        byte characterSet = 5;                  // 服务器使用的字符集
-        // TODO: 定义服务器状态
-        int serverStatus = 6;                   // 服务器状态
-        byte[] unknownFiledTwo = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};     // 不明区域二
 
-        HandShakePacket handShakePacket = new HandShakePacket(serverVersion.getBytes().length + 1 + 45);
-        handShakePacket.setProtocolVersion(protocolVersion);
-        handShakePacket.setServerVersion(serverVersion);
-        handShakePacket.setThreadID(threadID);
-        handShakePacket.setUnknownFieldOne(unknownFiledOne);
-        handShakePacket.setServerCapabilities(serverCapabilities);
-        handShakePacket.setCharacterSet(characterSet);
-        handShakePacket.setServerStatus(serverStatus);
-        handShakePacket.setUnknownFieldTwo(unknownFiledTwo);
-        byte[] body = new byte[handShakePacket.getSize()];
-        handShakePacket.getData(body);
-
-        /* 构建包头 */
-        PacketHeader packetHeader = new PacketHeader(4);
-        packetHeader.setPacketLength(handShakePacket.getSize());
-        packetHeader.setPacketID((byte) 0);     // TODO: 包序列号
-
-        /* 构建数据包 */
-        Packet packet = new Packet(packetHeader.getSize() + body.length);
-        packet.setPacketHeader(packetHeader);
-        packet.setPacketBody(body);
-
-        return packet;
+//        byte protocolVersion = 1;               // 协议版本
+//        StringType serverVersion = StringType.getStringType("Version 0.1");
+//        int threadID = (int) Thread.currentThread().getId();            // 线程 ID
+//        byte[] unknownFiledOne = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9}; // 不明区域一
+//        int serverCapabilities = 4;             // 服务器权能
+//        byte characterSet = 5;                  // 服务器使用的字符集
+//        int serverStatus = 6;                   // 服务器状态
+//        byte[] unknownFiledTwo = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};     // 不明区域二
+//
+//        HandShakePacket handShakePacket = new HandShakePacket(serverVersion.getSize() + 45);
+//        handShakePacket.setProtocolVersion(protocolVersion);
+//        handShakePacket.setServerVersion(serverVersion);
+//        handShakePacket.setThreadID(threadID);
+//        handShakePacket.setScramblePartOne(unknownFiledOne);
+//        handShakePacket.setServerCapabilities(serverCapabilities);
+//        handShakePacket.setCharacterSet(characterSet);
+//        handShakePacket.setServerStatus(serverStatus);
+//        handShakePacket.setScramblePartTwo(unknownFiledTwo);
+//        byte[] body = new byte[handShakePacket.getSize()];
+//        handShakePacket.getData(body);
+//
+//        /* 构建包头 */
+//        PacketHeader packetHeader = new PacketHeader(4);
+//        packetHeader.setPacketLength(handShakePacket.getSize());
+//        packetHeader.setPacketID((byte) 0);     // TODO: 包序列号
+//
+//        /* 构建数据包 */
+//        Packet packet = new Packet(packetHeader.getSize() + body.length);
+//        packet.setPacketHeader(packetHeader);
+//        packet.setPacketBody(body);
+//
+//        return packet;
+        return null;
     }
 
 }

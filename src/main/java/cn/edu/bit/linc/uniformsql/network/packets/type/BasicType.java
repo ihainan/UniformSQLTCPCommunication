@@ -10,6 +10,19 @@ public abstract class BasicType {
     protected byte[] _data_;
 
     /**
+     * 构造函数
+     */
+    protected BasicType() {}
+
+    /**
+     * 构造函数
+     * @param size 数据大小
+     */
+    protected BasicType(int size) {
+        _data_ = new byte[size];
+    }
+
+    /**
      * 获取数据所占据的字节数
      *
      * @return 数据所占据的字节数
