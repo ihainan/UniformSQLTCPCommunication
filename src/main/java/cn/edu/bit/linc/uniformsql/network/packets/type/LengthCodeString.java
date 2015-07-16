@@ -31,6 +31,36 @@ public class LengthCodeString extends LengthCodeBinaryType {
     }
 
     /**
+     * 根据字节数组构建 LengthCodeString 的实例
+     *
+     * @param bytes 字节数组
+     * @return LengthCodeString 的实例
+     */
+    public static LengthCodeString getLengthCodeString(byte[] bytes) {
+        LengthCodeBinaryType lengthCodeBinaryType = LengthCodeBinaryType.getLengthCodeBinaryType(bytes);
+
+        byte[] data = new byte[lengthCodeBinaryType.getSize()];
+        lengthCodeBinaryType.getData(data);
+
+        LengthCodeString lengthCodeString = new LengthCodeString();
+        lengthCodeString.setData(data);
+
+        return lengthCodeString;
+    }
+
+    /**
+     * 使用 data 数组构建达到一个 LengthCodeString 实例
+     *
+     * @param data 原始数据（含长度字段）
+     * @return LengthCodeString 实例
+     */
+    public static LengthCodeString getLengthCodeBinaryTypeUsingData(byte[] data) {
+        LengthCodeString lengthCodeString = new LengthCodeString();
+        lengthCodeString.setData(data);
+        return lengthCodeString;
+    }
+
+    /**
      * 获取 LengthCodeString 中存储的字符串
      *
      * @param lengthCodeString LengthCodeString 实例
@@ -40,6 +70,7 @@ public class LengthCodeString extends LengthCodeBinaryType {
         byte[] bytes = getBytes(lengthCodeString);
         return new String(bytes);
     }
+
 
     /**
      * 测试函数

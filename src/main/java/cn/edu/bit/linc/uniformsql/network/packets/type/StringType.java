@@ -66,6 +66,17 @@ public class StringType extends BasicType {
     }
 
     /**
+     * 获取不包含最后 Null 的 byte 数组
+     *
+     * @return 不包含最后 Null 的 byte 数组
+     */
+    public byte[] getDataWithoutNull() {
+        byte[] dataWithNull = new byte[_data_.length - 1];
+        System.arraycopy(_data_, 0, dataWithNull, 0, dataWithNull.length);
+        return dataWithNull;
+    }
+
+    /**
      * 测试函数
      *
      * @param args 程序参数

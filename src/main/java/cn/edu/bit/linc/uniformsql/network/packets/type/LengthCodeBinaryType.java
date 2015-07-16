@@ -67,6 +67,18 @@ public class LengthCodeBinaryType extends BasicType {
     }
 
     /**
+     * 使用 data 数组构建达到一个 LengthCodeBinaryType 实例
+     *
+     * @param data 原始数据（含长度字段）
+     * @return LengthCodeBinaryType 实例
+     */
+    public static LengthCodeBinaryType getLengthCodeBinaryTypeUsingData(byte[] data) {
+        LengthCodeBinaryType lengthCodeBinaryType = new LengthCodeBinaryType();
+        lengthCodeBinaryType.setData(data);
+        return lengthCodeBinaryType;
+    }
+
+    /**
      * 获取 LengthCodeBinaryType 中存储的 byte 数组
      *
      * @param lengthCodeBinaryType LengthCodeBinaryType 实例
