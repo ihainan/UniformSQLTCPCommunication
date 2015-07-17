@@ -13,12 +13,17 @@ public class HandShakePacket extends BasePacket {
     /**
      * 协议版本字段在 byte 数组中的偏移量
      */
-    public static int OFFSET_PROTOCOL_VERSION = 0;
+    public final static int OFFSET_PROTOCOL_VERSION = 0;
+
+    /**
+     * 协议版本字段的长度
+     */
+    public final static int LENGTH_PROTOCOL_VERSION = 1;
 
     /**
      * 服务器版本在 byte 数组中的偏移量
      */
-    public static int OFFSET_SERVER_VERSION = 1;
+    public final static int OFFSET_SERVER_VERSION = 1;
 
     /**
      * 服务器版本字段长度
@@ -28,37 +33,68 @@ public class HandShakePacket extends BasePacket {
     /**
      * 线程编号字段偏移量 - 服务器版本字段长度
      */
-    public static int OFFSET_THREAD_ID_MINUS_SV_LENGTH = 1;
+    public final static int OFFSET_THREAD_ID_MINUS_SV_LENGTH = 1;
 
     /**
-     * 未知字段一偏移量 - 服务器版本字段长度
+     * 协议版本字段的长度
      */
-    public static int OFFSET_SCRAMBLE_ONE_MINUS_SV_LENGTH = 5;
+    public final static int LENGTH_THREAD_ID = 4;
+
+    /**
+     * 挑战数字段（前半） - 服务器版本字段长度
+     */
+    public final static int OFFSET_SCRAMBLE_ONE_MINUS_SV_LENGTH = 5;
+
+    /**
+     * 挑战数字段（前半）的长度
+     */
+    public final static int LENGTH_SCRAMBLE_ONE = 9;
 
     /**
      * 服务器权能标志字段偏移量 - 服务器版本字段长度
      */
-    public static int OFFSET_SERVER_CAPABILITIES_MINUS_SV_LENGTH = 14;
+    public final static int OFFSET_SERVER_CAPABILITIES_MINUS_SV_LENGTH = 14;
+
+    /**
+     * 服务器权能标志字段的长度
+     */
+    public final static int LENGTH_SERVER_CAPABILITIES = 2;
 
     /**
      * 服务器端字符编码字段偏移量 - 服务器版本字段长度
      */
-    public static int OFFSET_CHARACTER_SET_MINUS_SV_LENGTH = 16;
+    public final static int OFFSET_CHARACTER_SET_MINUS_SV_LENGTH = 16;
+
+    /**
+     * 服务器端字符编码字段的长度
+     */
+    public final static int LENGTH_CHARACTER_SET = 1;
 
     /**
      * 服务器状态字段偏移量 - 服务器版本字段长度
      */
-    public static int OFFSET_SERVER_STATUS_MINUS_SV_LENGTH = 17;
+    public final static int OFFSET_SERVER_STATUS_MINUS_SV_LENGTH = 17;
+
+    /**
+     * 服务器端字符编码字段的长度
+     */
+    public final static int LENGTH_SERVER_STATUS = 2;
 
     /**
      * 保留字段偏移量 - 服务器版本字段长度
      */
-    public static int OFFSET_RESERVED_FIELD_MINUS_SV_LENGTH = 19;
+    public final static int OFFSET_RESERVED_FIELD_MINUS_SV_LENGTH = 19;
 
     /**
-     * 未知字段二偏移量 - 服务器版本字段长度
+     * 挑战数（后半）字段偏移量 - 服务器版本字段长度
      */
-    public static int OFFSET_SCRAMBLE_TWO_MINUS_SV_LENGTH = 32;
+    public final static int OFFSET_SCRAMBLE_TWO_MINUS_SV_LENGTH = 32;
+
+    /**
+     * 挑战数（后半）字段的长度
+     */
+    public final static int LENGTH_SCRAMBLE_TWO = 13;
+
 
     /**
      * 创建指定大小的包头数据报文
@@ -69,10 +105,22 @@ public class HandShakePacket extends BasePacket {
         super(size);
     }
 
+    /**
+     * 设置 _data_ 数组，同时确定不定长字段的位置
+     *
+     * @param data 指定 byte 数组
+     */
     @Override
     public void setData(byte[] data) {
         super.setData(data);
 
+        calVarLen();
+    }
+
+    /**
+     * 获取得到 varLen 的值
+     */
+    private void calVarLen() {
         // 获取 varLen
         varLen = 1;
         int currentPos = OFFSET_SERVER_VERSION;
@@ -86,8 +134,10 @@ public class HandShakePacket extends BasePacket {
      *
      * @param protocolVersion 协议版本
      */
-    public void setProtocolVersion(byte protocolVersion) {
-        _data_[OFFSET_PROTOCOL_VERSION] = protocolVersion;
+    public void setProtocolVersion(IntegerType protocolVersion) {
+        byte[] bytes = new byte[protocolVersion.getSize()];
+        protocolVersion.getData(bytes);
+        System.arraycopy(bytes, 0, _data_, OFFSET_PROTOCOL_VERSION, bytes.length);
     }
 
     /**
@@ -95,8 +145,10 @@ public class HandShakePacket extends BasePacket {
      *
      * @return 协议版本
      */
-    public byte getProtocolVersion() {
-        return _data_[OFFSET_PROTOCOL_VERSION];
+    public IntegerType getProtocolVersion() {
+        byte[] data = new byte[LENGTH_PROTOCOL_VERSION];
+        System.arraycopy(_data_, OFFSET_PROTOCOL_VERSION, data, 0, data.length);
+        return IntegerType.getIntegerType(data);
     }
 
 
@@ -146,10 +198,10 @@ public class HandShakePacket extends BasePacket {
      */
     public IntegerType getThreadID() {
         if (this.varLen == -1) {
-            // TODO: 获取 varLen
+            calVarLen();
         }
 
-        byte[] data = new byte[4];
+        byte[] data = new byte[LENGTH_THREAD_ID];
         System.arraycopy(_data_, this.varLen + OFFSET_THREAD_ID_MINUS_SV_LENGTH, data, 0, data.length);
         return IntegerType.getIntegerType(data);
     }
@@ -165,7 +217,7 @@ public class HandShakePacket extends BasePacket {
             throw new PacketExceptions.NecessaryFieldNotSetException();
         }
 
-        System.arraycopy(scrambleNumberPartOne, 0, _data_, this.varLen + OFFSET_SCRAMBLE_ONE_MINUS_SV_LENGTH, 9);
+        System.arraycopy(scrambleNumberPartOne, 0, _data_, this.varLen + OFFSET_SCRAMBLE_ONE_MINUS_SV_LENGTH, LENGTH_SCRAMBLE_ONE);
     }
 
     /**
@@ -175,10 +227,10 @@ public class HandShakePacket extends BasePacket {
      */
     public byte[] getScramblePartOne() {
         if (this.varLen == -1) {
-            // TODO: 获取 varLen
+            calVarLen();
         }
 
-        byte[] scrambleNumberPartOne = new byte[9];
+        byte[] scrambleNumberPartOne = new byte[LENGTH_SCRAMBLE_ONE];
         System.arraycopy(_data_, this.varLen + OFFSET_SCRAMBLE_ONE_MINUS_SV_LENGTH, scrambleNumberPartOne, 0, scrambleNumberPartOne.length);
         return scrambleNumberPartOne;
     }
@@ -206,10 +258,10 @@ public class HandShakePacket extends BasePacket {
      */
     public IntegerType getServerCapabilities() {
         if (this.varLen == -1) {
-            // TODO: 获取 varLen
+            calVarLen();
         }
 
-        byte[] data = new byte[2];
+        byte[] data = new byte[LENGTH_SERVER_CAPABILITIES];
         System.arraycopy(_data_, this.varLen + OFFSET_SERVER_CAPABILITIES_MINUS_SV_LENGTH, data, 0, data.length);
         return IntegerType.getIntegerType(data);
     }
@@ -220,12 +272,14 @@ public class HandShakePacket extends BasePacket {
      * @param characterSet 服务器字符编码
      * @throws PacketExceptions.NecessaryFieldNotSetException varLen 未设置
      */
-    public void setCharacterSet(byte characterSet) throws PacketExceptions.NecessaryFieldNotSetException {
+    public void setCharacterSet(IntegerType characterSet) throws PacketExceptions.NecessaryFieldNotSetException {
         if (this.varLen == -1) {
             throw new PacketExceptions.NecessaryFieldNotSetException();
         }
 
-        _data_[this.varLen + OFFSET_CHARACTER_SET_MINUS_SV_LENGTH] = characterSet;
+        byte[] bytes = new byte[characterSet.getSize()];
+        characterSet.getData(bytes);
+        System.arraycopy(bytes, 0, _data_, this.varLen + OFFSET_CHARACTER_SET_MINUS_SV_LENGTH, bytes.length);
     }
 
     /**
@@ -233,12 +287,14 @@ public class HandShakePacket extends BasePacket {
      *
      * @return 服务器字符编码
      */
-    public byte getCharacterSet() {
+    public IntegerType getCharacterSet() {
         if (this.varLen == -1) {
-            // TODO: 获取 varLen
+            calVarLen();
         }
 
-        return _data_[this.varLen + OFFSET_CHARACTER_SET_MINUS_SV_LENGTH];
+        byte[] data = new byte[LENGTH_CHARACTER_SET];
+        System.arraycopy(_data_, this.varLen + OFFSET_CHARACTER_SET_MINUS_SV_LENGTH, data, 0, data.length);
+        return IntegerType.getIntegerType(data);
     }
 
     /**
@@ -264,10 +320,10 @@ public class HandShakePacket extends BasePacket {
      */
     public IntegerType getServerStatus() {
         if (this.varLen == -1) {
-            // TODO: 获取 varLen
+            calVarLen();
         }
 
-        byte[] data = new byte[2];
+        byte[] data = new byte[LENGTH_SERVER_STATUS];
         System.arraycopy(_data_, this.varLen + OFFSET_SERVER_STATUS_MINUS_SV_LENGTH, data, 0, data.length);
         return IntegerType.getIntegerType(data);
     }
@@ -283,7 +339,7 @@ public class HandShakePacket extends BasePacket {
             throw new PacketExceptions.NecessaryFieldNotSetException();
         }
 
-        System.arraycopy(scrambleNumberPartTwo, 0, _data_, this.varLen + OFFSET_SCRAMBLE_TWO_MINUS_SV_LENGTH, 13);
+        System.arraycopy(scrambleNumberPartTwo, 0, _data_, this.varLen + OFFSET_SCRAMBLE_TWO_MINUS_SV_LENGTH, LENGTH_SCRAMBLE_TWO);
     }
 
 
@@ -294,10 +350,10 @@ public class HandShakePacket extends BasePacket {
      */
     public byte[] getScramblePartTwo() {
         if (this.varLen == -1) {
-            // TODO: 获取 varLen
+            calVarLen();
         }
 
-        byte[] scrambleNumberPartTwo = new byte[13];
+        byte[] scrambleNumberPartTwo = new byte[LENGTH_SCRAMBLE_TWO];
         System.arraycopy(_data_, this.varLen + OFFSET_SCRAMBLE_TWO_MINUS_SV_LENGTH, scrambleNumberPartTwo, 0, scrambleNumberPartTwo.length);
         return scrambleNumberPartTwo;
     }
@@ -305,23 +361,23 @@ public class HandShakePacket extends BasePacket {
     /**
      * 测试函数
      *
-     * @param agrs 程序参数
+     * @param args 程序参数
      * @throws PacketExceptions.NecessaryFieldNotSetException varLen 未设置
      */
-    public static void main(String[] agrs) throws PacketExceptions.NecessaryFieldNotSetException {
-        byte protocolVersion = 2;
+    public static void main(String[] args) throws PacketExceptions.NecessaryFieldNotSetException {
+        IntegerType protocolVersion = IntegerType.getIntegerType(2, LENGTH_PROTOCOL_VERSION);
         StringType serverVersion = StringType.getStringType("Version 0.1");
-        IntegerType threadID = IntegerType.getIntegerType(3, 4);
-        IntegerType serverCapabilities = IntegerType.getIntegerType(4, 2);
-        byte characterSet = 5;
-        IntegerType serverStatus = IntegerType.getIntegerType(6, 2);
+        IntegerType threadID = IntegerType.getIntegerType(3, LENGTH_THREAD_ID);
+        IntegerType serverCapabilities = IntegerType.getIntegerType(4, LENGTH_SERVER_CAPABILITIES);
+        IntegerType characterSet = IntegerType.getIntegerType(5, LENGTH_CHARACTER_SET);
+        IntegerType serverStatus = IntegerType.getIntegerType(6, LENGTH_SERVER_STATUS);
 
-        String randomStr = RandomStringUtils.randomAlphanumeric(20);    // 随机字符串
+        String randomStr = RandomStringUtils.randomAlphanumeric(LENGTH_SCRAMBLE_ONE + LENGTH_SCRAMBLE_TWO - 2);    // 随机字符串
         StringType randomStrPartOneST = StringType.getStringType(randomStr.substring(0, 8));
-        byte[] scramblePartOne = new byte[9];
+        byte[] scramblePartOne = new byte[LENGTH_SCRAMBLE_ONE];
         randomStrPartOneST.getData(scramblePartOne);
         StringType randomStrPartTwoST = StringType.getStringType(randomStr.substring(8, 20));
-        byte[] scramblePartTwo = new byte[13];
+        byte[] scramblePartTwo = new byte[LENGTH_SCRAMBLE_TWO];
         randomStrPartTwoST.getData(scramblePartTwo);
 
         HandShakePacket handShakePacket = new HandShakePacket(serverVersion.getSize() + 45);
@@ -338,23 +394,23 @@ public class HandShakePacket extends BasePacket {
         System.out.println(handShakePacket);
 
         System.out.println(randomStr);
-        System.out.println("Protocol Version    : " + handShakePacket.getProtocolVersion());
+        System.out.println("Protocol Version    : " + IntegerType.getIntegerValue(handShakePacket.getProtocolVersion()));
         System.out.println("Server Version      : " + StringType.getString(handShakePacket.getServerVersion()));
         System.out.println("Thread ID           : " + IntegerType.getIntegerValue(handShakePacket.getThreadID()));
         System.out.println("Scramble Part One   : " + Arrays.toString(handShakePacket.getScramblePartOne()));
         System.out.println("Server Capabilities : " + IntegerType.getIntegerValue(handShakePacket.getServerCapabilities()));
-        System.out.println("Character Set       : " + handShakePacket.getCharacterSet());
+        System.out.println("Character Set       : " + IntegerType.getIntegerValue(handShakePacket.getCharacterSet()));
         System.out.println("Server Status       : " + IntegerType.getIntegerValue(handShakePacket.getServerStatus()));
         System.out.println("Scramble Part Two   : " + Arrays.toString(handShakePacket.getScramblePartTwo()));
 
         System.out.println();   // 检测偏移量是否设置正确
 
-        System.out.println("Protocol Version    : " + handShakePacket.getProtocolVersion());
+        System.out.println("Protocol Version    : " + IntegerType.getIntegerValue(handShakePacket.getProtocolVersion()));
         System.out.println("Server Version      : " + StringType.getString(handShakePacket.getServerVersion()));
         System.out.println("Thread ID           : " + IntegerType.getIntegerValue(handShakePacket.getThreadID()));
         System.out.println("Scramble Part One   : " + Arrays.toString(handShakePacket.getScramblePartOne()));
         System.out.println("Server Capabilities : " + IntegerType.getIntegerValue(handShakePacket.getServerCapabilities()));
-        System.out.println("Character Set       : " + handShakePacket.getCharacterSet());
+        System.out.println("Character Set       : " + IntegerType.getIntegerValue(handShakePacket.getCharacterSet()));
         System.out.println("Server Status       : " + IntegerType.getIntegerValue(handShakePacket.getServerStatus()));
         System.out.println("Scramble Part Two   : " + Arrays.toString(handShakePacket.getScramblePartTwo()));
     }

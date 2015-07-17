@@ -3,11 +3,11 @@ package cn.edu.bit.linc.uniformsql.network.packets.type;
 /**
  * 字段基本类型值 - 长度编码字符串
  */
-public class LengthCodeString extends LengthCodeBinaryType {
+public class LengthCodeStringType extends LengthCodeBinaryType {
     /**
      * 构造函数
      */
-    protected LengthCodeString() {
+    protected LengthCodeStringType() {
         super();
     }
 
@@ -17,14 +17,14 @@ public class LengthCodeString extends LengthCodeBinaryType {
      * @param str 字符串
      * @return LengthCodeString 的实例
      */
-    public static LengthCodeString getLengthCodeString(String str) {
+    public static LengthCodeStringType getLengthCodeString(String str) {
         byte[] bytes = str.getBytes();
         LengthCodeBinaryType lengthCodeBinaryType = getLengthCodeBinaryType(bytes);
 
         byte[] data = new byte[lengthCodeBinaryType.getSize()];
         lengthCodeBinaryType.getData(data);
 
-        LengthCodeString lengthCodeString = new LengthCodeString();
+        LengthCodeStringType lengthCodeString = new LengthCodeStringType();
         lengthCodeString.setData(data);
 
         return lengthCodeString;
@@ -36,13 +36,13 @@ public class LengthCodeString extends LengthCodeBinaryType {
      * @param bytes 字节数组
      * @return LengthCodeString 的实例
      */
-    public static LengthCodeString getLengthCodeString(byte[] bytes) {
+    public static LengthCodeStringType getLengthCodeString(byte[] bytes) {
         LengthCodeBinaryType lengthCodeBinaryType = LengthCodeBinaryType.getLengthCodeBinaryType(bytes);
 
         byte[] data = new byte[lengthCodeBinaryType.getSize()];
         lengthCodeBinaryType.getData(data);
 
-        LengthCodeString lengthCodeString = new LengthCodeString();
+        LengthCodeStringType lengthCodeString = new LengthCodeStringType();
         lengthCodeString.setData(data);
 
         return lengthCodeString;
@@ -54,8 +54,8 @@ public class LengthCodeString extends LengthCodeBinaryType {
      * @param data 原始数据（含长度字段）
      * @return LengthCodeString 实例
      */
-    public static LengthCodeString getLengthCodeBinaryTypeUsingData(byte[] data) {
-        LengthCodeString lengthCodeString = new LengthCodeString();
+    public static LengthCodeStringType getLengthCodeBinaryTypeUsingData(byte[] data) {
+        LengthCodeStringType lengthCodeString = new LengthCodeStringType();
         lengthCodeString.setData(data);
         return lengthCodeString;
     }
@@ -66,7 +66,7 @@ public class LengthCodeString extends LengthCodeBinaryType {
      * @param lengthCodeString LengthCodeString 实例
      * @return LengthCodeString 中存储的字符串
      */
-    public static String getString(LengthCodeString lengthCodeString) {
+    public static String getString(LengthCodeStringType lengthCodeString) {
         byte[] bytes = getBytes(lengthCodeString);
         return new String(bytes);
     }
@@ -79,7 +79,7 @@ public class LengthCodeString extends LengthCodeBinaryType {
      */
     public static void main(String[] args) {
         String str = "Hello World";
-        LengthCodeString lengthCodeString = getLengthCodeString(str);
+        LengthCodeStringType lengthCodeString = getLengthCodeString(str);
         System.out.println(getString(lengthCodeString));
     }
     /* Output:
