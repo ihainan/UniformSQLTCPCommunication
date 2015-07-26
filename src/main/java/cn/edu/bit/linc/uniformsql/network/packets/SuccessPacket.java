@@ -3,7 +3,6 @@ package cn.edu.bit.linc.uniformsql.network.packets;
 import cn.edu.bit.linc.uniformsql.network.packets.type.IntegerType;
 import cn.edu.bit.linc.uniformsql.network.packets.type.LengthCodeBinaryType;
 import cn.edu.bit.linc.uniformsql.network.packets.type.LengthCodeStringType;
-import cn.edu.bit.linc.uniformsql.network.packets.type.StringType;
 
 /**
  * 成功响应报文
@@ -66,7 +65,7 @@ public class SuccessPacket extends BasePacket {
     public final static int OFFSET_SERVER_MESSAGE_MINUS_ID_LENGTH = 5;
 
     /**
-     * 创建指定大小的包头数据报文
+     * 创建指定大小的成功响应报文
      *
      * @param size 指定大小（字节为单位）
      */
@@ -219,6 +218,11 @@ public class SuccessPacket extends BasePacket {
         return LengthCodeStringType.getLengthCodeBinaryTypeUsingData(data);
     }
 
+    /**
+     * 测试函数
+     *
+     * @param args 程序参数
+     */
     public static void main(String[] args) throws PacketExceptions.NecessaryFieldNotSetException {
 
         IntegerType packetIdentifier = IntegerType.getIntegerType(0x00, LENGTH_PACKET_IDENTIFIER);
@@ -227,8 +231,6 @@ public class SuccessPacket extends BasePacket {
         IntegerType serverStatus = IntegerType.getIntegerType(500, LENGTH_SERVER_STATUS);
         IntegerType warningNumber = IntegerType.getIntegerType(2, LENGTH_WARNING_NUMBER);
         LengthCodeStringType serverMessage = LengthCodeStringType.getLengthCodeString("SERVER MESSAGE!");
-        //StringType command = StringType.getStringType("SELECT * FROM `Student`");
-        //LengthCodeStringType command = LengthCodeStringType.getLengthCodeString("SELECT * FROM `Student`");
 
         SuccessPacket successPacket = new SuccessPacket(packetIdentifier.getSize() + changedRows.getSize() + indexID.getSize() + serverStatus.getSize() + warningNumber.getSize() + serverMessage.getSize());
         successPacket.setPacketIdentifier(packetIdentifier);
@@ -259,5 +261,14 @@ public class SuccessPacket extends BasePacket {
         System.out.println("Server Message    : " + LengthCodeStringType.getString(successPacket.getServerMessage()));
 
     }
+    /* Output:
+    [0, 8, 1, 2, 3, 4, 5, 6, 7, 8, 4, 4, 3, 2, 1, 1, -12, 0, 2, 15, 83, 69, 82, 86, 69, 82, 32, 77, 69, 83, 83, 65, 71, 69, 33]
+    Packet Identifier : 0
+    Changed Rows      : 1 2 3 4 5 6 7 8
+    Index ID          : 4 3 2 1
+    Server Status     : 500
+    Warning Number    : 2
+    Server Message    : SERVER MESSAGE!
+     */
 
 }

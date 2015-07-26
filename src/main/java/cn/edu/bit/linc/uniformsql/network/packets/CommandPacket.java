@@ -24,7 +24,7 @@ public class CommandPacket extends BasePacket {
     public final static int OFFSET_COMMAND = 1;
 
     /**
-     * 创建指定大小的包头数据报文
+     * 创建指定大小的命令请求报文
      *
      * @param size 指定大小（字节为单位）
      */
@@ -94,7 +94,6 @@ public class CommandPacket extends BasePacket {
     public static void main(String[] args) {
 
         IntegerType commandCode = IntegerType.getIntegerType(1, LENGTH_COMMAND_CODE);
-        //StringType command = StringType.getStringType("SELECT * FROM `Student`");
         LengthCodeStringType command = LengthCodeStringType.getLengthCodeString("SELECT * FROM `Student`");
 
         CommandPacket commandPacket = new CommandPacket(commandCode.getSize() + command.getSize());

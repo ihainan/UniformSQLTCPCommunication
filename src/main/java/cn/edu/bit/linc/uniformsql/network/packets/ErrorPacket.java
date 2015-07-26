@@ -45,7 +45,7 @@ public class ErrorPacket extends BasePacket {
     public final static int OFFSET_ERROR_MESSAGE = 5;
 
     /**
-     * 创建指定大小的包头数据报文
+     * 创建指定大小的错误响应报文
      *
      * @param size 指定大小（字节为单位）
      */
