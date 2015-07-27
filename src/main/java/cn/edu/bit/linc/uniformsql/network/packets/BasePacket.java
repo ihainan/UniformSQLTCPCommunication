@@ -17,7 +17,7 @@ public abstract class BasePacket {
      * @param size 指定大小（字节为单位）
      */
     public BasePacket(int size) {
-        setData(new byte[size]);
+        _data_ = new byte[size];
     }
 
     /**

@@ -46,7 +46,7 @@ public class UniformSQLServer {
             final ServerSocketHandler handler = socketHandlerFactory.newSocketHandler(clientSocket);
 
             handlerService.submit(new Runnable() {
-                @Override
+
                 public void run() {
                     try {
                         handler.handleSocket();

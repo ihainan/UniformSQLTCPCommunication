@@ -145,10 +145,26 @@ public class EOFPacket extends BasePacket{
         System.out.println("Warning Number         : " + IntegerType.getIntegerValue(eofPacket.getWarningNumber()));
         System.out.println("Server Status Bit Mask : " + IntegerType.getIntegerValue(eofPacket.getServerStatusBitMask()));
 
+        /* 通过byte[]构建 */
+        EOFPacket eofPacketCopy = new EOFPacket(eofPacket.getSize());
+        byte[] data = new byte[eofPacket.getSize()];
+        eofPacket.getData(data);
+        eofPacketCopy.setData(data);
+
+        System.out.println();
+        System.out.println(eofPacketCopy);
+        System.out.println("Packet Identifier      : " + IntegerType.getIntegerValue(eofPacketCopy.getPacketIdentifier()));
+        System.out.println("Warning Number         : " + IntegerType.getIntegerValue(eofPacketCopy.getWarningNumber()));
+        System.out.println("Server Status Bit Mask : " + IntegerType.getIntegerValue(eofPacketCopy.getServerStatusBitMask()));
+
     }
 
     /* Output:
     [-2, 0, 2, -1, -1]
+    Packet Identifier      : 254
+    Warning Number         : 2
+    Server Status Bit Mask : 65535
+
     Packet Identifier      : 254
     Warning Number         : 2
     Server Status Bit Mask : 65535

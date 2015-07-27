@@ -104,9 +104,23 @@ public class CommandPacket extends BasePacket {
         System.out.println("Command Code      : " + IntegerType.getIntegerValue(commandPacket.getCommandCode()));
         System.out.println("Command           : " + LengthCodeStringType.getString(commandPacket.getCommand()));
 
+        /* 通过byte[]构建 */
+        CommandPacket commandPacketCopy = new CommandPacket(commandPacket.getSize());
+        byte[] data = new byte[commandPacket.getSize()];
+        commandPacket.getData(data);
+        commandPacketCopy.setData(data);
+        System.out.println();
+        System.out.println(commandPacketCopy);
+        System.out.println("Command Code      : " + IntegerType.getIntegerValue(commandPacketCopy.getCommandCode()));
+        System.out.println("Command           : " + LengthCodeStringType.getString(commandPacketCopy.getCommand()));
+
     }
 
     /* Output:
+    [1, 23, 83, 69, 76, 69, 67, 84, 32, 42, 32, 70, 82, 79, 77, 32, 96, 83, 116, 117, 100, 101, 110, 116, 96]
+    Command Code      : 1
+    Command           : SELECT * FROM `Student`
+
     [1, 23, 83, 69, 76, 69, 67, 84, 32, 42, 32, 70, 82, 79, 77, 32, 96, 83, 116, 117, 100, 101, 110, 116, 96]
     Command Code      : 1
     Command           : SELECT * FROM `Student`

@@ -6,7 +6,7 @@ import cn.edu.bit.linc.uniformsql.network.packets.type.StringType;
 import cn.edu.bit.linc.uniformsql.network.utils.CHAP;
 
 /**
- * 客户端认证报文
+ * 客户端认证报�?
  */
 public class CredentialsPacket extends BasePacket {
     /**
@@ -15,7 +15,7 @@ public class CredentialsPacket extends BasePacket {
     public final static int OFFSET_CLIENT_CAPABILITIES = 0;
 
     /**
-     * 最大报文长度字段偏移量
+     * �?大报文长度字段偏移量
      */
     public final static int OFFSET_MAX_PACKET_LENGTH = 4;
 
@@ -25,7 +25,7 @@ public class CredentialsPacket extends BasePacket {
     public final static int OFFSET_CHARACTER_SET = 8;
 
     /**
-     * 保留字段偏移量
+     * 保留字段偏移�?
      */
     public final static int OFFSET_RESERVED_FIELD = 9;
 
@@ -35,17 +35,17 @@ public class CredentialsPacket extends BasePacket {
     public final static int OFFSET_CREDENTIAL_INFO = 32;
 
     /**
-     * 客户端权能字段长度
+     * 客户端权能字段长�?
      */
     public final static int LENGTH_CLIENT_CAPABILITIES = 4;
 
     /**
-     * 最大报文长度字段长度
+     * �?大报文长度字段长�?
      */
     public final static int LENGTH_MAX_PACKET_LENGTH = 4;
 
     /**
-     * 字符集字段长度
+     * 字符集字段长�?
      */
     public final static int LENGTH_CHARACTER_SET = 1;
 
@@ -57,16 +57,16 @@ public class CredentialsPacket extends BasePacket {
     /**
      * 创建指定大小的包头数据包
      *
-     * @param size 指定大小（字节为单位）
+     * @param size 指定大小（字节为单位�?
      */
     public CredentialsPacket(int size) {
         super(size);
     }
 
     /**
-     * 设置客户端权能标志
+     * 设置客户端权能标�?
      *
-     * @param capabilities 客户端权能标志
+     * @param capabilities 客户端权能标�?
      */
     public void setClientCapabilities(IntegerType capabilities) {
         byte[] bytes = new byte[capabilities.getSize()];
@@ -75,9 +75,9 @@ public class CredentialsPacket extends BasePacket {
     }
 
     /**
-     * 获取客户端权能标志
+     * 获取客户端权能标�?
      *
-     * @return 客户端权能标志
+     * @return 客户端权能标�?
      */
     public IntegerType getClientCapabilities() {
         byte[] data = new byte[LENGTH_CLIENT_CAPABILITIES];
@@ -86,9 +86,9 @@ public class CredentialsPacket extends BasePacket {
     }
 
     /**
-     * 设置最大报文长度
+     * 设置�?大报文长�?
      *
-     * @param maxPacketLength 最大报文长度
+     * @param maxPacketLength �?大报文长�?
      */
     public void setMaxPacketLength(IntegerType maxPacketLength) {
         byte[] bytes = new byte[maxPacketLength.getSize()];
@@ -97,9 +97,9 @@ public class CredentialsPacket extends BasePacket {
     }
 
     /**
-     * 获取最大报文长度
+     * 获取�?大报文长�?
      *
-     * @return 最大报文长度
+     * @return �?大报文长�?
      */
     public IntegerType getMaxPacketLength() {
         byte[] data = new byte[LENGTH_MAX_PACKET_LENGTH];
@@ -135,7 +135,7 @@ public class CredentialsPacket extends BasePacket {
      * @param credentialInformation 认证信息
      */
     public void setCredentialInformation(CredentialInformation credentialInformation) {
-        // 用户名
+        // 用户�?
         byte[] bytes = credentialInformation.getBytesData();
         System.arraycopy(bytes, 0, _data_, OFFSET_CREDENTIAL_INFO, bytes.length);
     }
@@ -152,11 +152,11 @@ public class CredentialsPacket extends BasePacket {
     }
 
     /**
-     * 验证信息字段类，包含如下字段：<br>
+     * 验证信息字段类，包含如下字段�?<br>
      */
     public static class CredentialInformation {
         /**
-         * 用户名字段
+         * 用户名字�?
          */
         public StringType userName;
         /**
@@ -169,9 +169,9 @@ public class CredentialsPacket extends BasePacket {
         public StringType dbName;
 
         /**
-         * 构造函数
+         * 构�?�函�?
          *
-         * @param userName 用户名
+         * @param userName 用户�?
          * @param token    挑战认证数据
          * @param dbName   连接数据库名
          */
@@ -182,14 +182,14 @@ public class CredentialsPacket extends BasePacket {
         }
 
         /**
-         * 获取三个字段合在一起的 byte 数组
+         * 获取三个字段合在�?起的 byte 数组
          *
          * @return byte 数组
          */
         public byte[] getBytesData() {
             byte[] data = new byte[userName.getSize() + token.getSize() + ((dbName == null || dbName.getSize() == 0) ? 0 : dbName.getSize())];
 
-            // 用户名
+            // 用户�?
             byte[] bytesUserName = new byte[userName.getSize()];
             userName.getData(bytesUserName);
             System.arraycopy(bytesUserName, 0, data, 0, bytesUserName.length);
@@ -218,7 +218,7 @@ public class CredentialsPacket extends BasePacket {
          * @return CredentialInformation 实例
          */
         public static CredentialInformation getCredentialInformationFromBytes(byte[] data) {
-            /* 寻找第一个 NULL 符号在数组中的位置 */
+            /* 寻找第一�? NULL 符号在数组中的位�? */
             int posOfFirstNull = -1;
             for (int i = 0; i < data.length; ++i) {
                 if (data[i] == 0x00) {
@@ -228,7 +228,7 @@ public class CredentialsPacket extends BasePacket {
             }
             if (posOfFirstNull == -1) return null;
 
-            // 用户名
+            // 用户�?
             byte[] bytesUserName = new byte[posOfFirstNull + 1];
             System.arraycopy(data, 0, bytesUserName, 0, bytesUserName.length);
             StringType userName = StringType.getStringType(bytesUserName);
@@ -256,7 +256,7 @@ public class CredentialsPacket extends BasePacket {
      * @param args 程序参数
      */
     public static void main(String[] args) {
-        /* 获取各字段数据 */
+        /* 获取各字段数�? */
         IntegerType capabilities = IntegerType.getIntegerType(5, LENGTH_CLIENT_CAPABILITIES);
         IntegerType maxPacketLength = IntegerType.getIntegerType(10, LENGTH_MAX_PACKET_LENGTH);
         IntegerType characterSet = IntegerType.getIntegerType(1, LENGTH_CHARACTER_SET);
@@ -268,7 +268,7 @@ public class CredentialsPacket extends BasePacket {
         StringType dbName = StringType.getStringType("db_test");
         CredentialInformation credentialInformation = new CredentialInformation(userName, token, dbName);
 
-        /* 构造验证包 */
+        /* 构�?�验证包 */
         CredentialsPacket credentialsPacket = new CredentialsPacket(32 + userName.getSize() + token.getSize() + dbName.getSize());
         credentialsPacket.setClientCapabilities(capabilities);
         credentialsPacket.setMaxPacketLength(maxPacketLength);

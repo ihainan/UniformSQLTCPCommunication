@@ -124,6 +124,10 @@ public class SuccessPacket extends BasePacket {
      * @return 改变行数
      */
     public LengthCodeBinaryType getChangedRows() {
+        byte[] tmp = new byte[_data_.length - OFFSET_CHANGED_ROWS];
+        System.arraycopy(_data_, OFFSET_CHANGED_ROWS, tmp, 0, tmp.length);
+        rowLen = LengthCodeBinaryType.getLength(tmp);
+
         byte[] data = new byte[rowLen];
         System.arraycopy(_data_, OFFSET_CHANGED_ROWS, data, 0, data.length);
         return LengthCodeBinaryType.getLengthCodeBinaryTypeUsingData(data);
@@ -147,6 +151,10 @@ public class SuccessPacket extends BasePacket {
      * @return 索引ID
      */
     public LengthCodeBinaryType getIndexID() {
+        byte[] tmp = new byte[_data_.length - rowLen - OFFSET_INDEX_ID_MINUS_CR_LENGTH];
+        System.arraycopy(_data_, rowLen + OFFSET_INDEX_ID_MINUS_CR_LENGTH, tmp, 0, tmp.length);
+        idLen = LengthCodeBinaryType.getLength(tmp);
+
         byte[] data = new byte[idLen];
         System.arraycopy(_data_, rowLen + OFFSET_INDEX_ID_MINUS_CR_LENGTH, data, 0, data.length);
         return LengthCodeBinaryType.getLengthCodeBinaryTypeUsingData(data);
@@ -259,6 +267,33 @@ public class SuccessPacket extends BasePacket {
         System.out.println("Server Status     : " + IntegerType.getIntegerValue(successPacket.getServerStatus()));
         System.out.println("Warning Number    : " + IntegerType.getIntegerValue(successPacket.getWarningNumber()));
         System.out.println("Server Message    : " + LengthCodeStringType.getString(successPacket.getServerMessage()));
+
+        /* 通过byte[]构建 */
+        SuccessPacket successPacketCopy = new SuccessPacket(successPacket.getSize());
+        byte[] data = new byte[successPacket.getSize()];
+        successPacket.getData(data);
+        successPacketCopy.setData(data);
+        System.out.println();
+
+        System.out.println(successPacketCopy);
+        System.out.println("Packet Identifier : " + IntegerType.getIntegerValue(successPacketCopy.getPacketIdentifier()));
+        System.out.print("Changed Rows      : ");
+        bytes = LengthCodeBinaryType.getBytes(successPacketCopy.getChangedRows());
+        for(byte b : bytes) {
+            System.out.print(b + " ");
+        }
+        System.out.println();
+
+        System.out.print("Index ID          : ");
+        bytes = LengthCodeBinaryType.getBytes(successPacketCopy.getIndexID());
+        for(byte b : bytes) {
+            System.out.print(b + " ");
+        }
+        System.out.println();
+
+        System.out.println("Server Status     : " + IntegerType.getIntegerValue(successPacketCopy.getServerStatus()));
+        System.out.println("Warning Number    : " + IntegerType.getIntegerValue(successPacketCopy.getWarningNumber()));
+        System.out.println("Server Message    : " + LengthCodeStringType.getString(successPacketCopy.getServerMessage()));
 
     }
     /* Output:

@@ -1,6 +1,9 @@
 package cn.edu.bit.linc.uniformsql.network.packets;
 
+import cn.edu.bit.linc.uniformsql.network.packets.type.LengthCodeBinaryType;
 import cn.edu.bit.linc.uniformsql.network.packets.type.LengthCodeStringType;
+
+import java.util.ArrayList;
 
 /**
  * 行数据报文
@@ -29,6 +32,20 @@ public class RowDataPacket extends BasePacket {
     @Override
     public void setData(byte[] data) {
         super.setData(data);
+
+        ArrayList <Integer> tmpRowOffsets = new ArrayList<Integer>();
+        int index = 0, offset = 0;
+        tmpRowOffsets.add(0, 0);
+        while(offset < _data_.length) {
+            byte[] tmp = new byte[_data_.length - tmpRowOffsets.get(index)];
+            System.arraycopy(_data_, tmpRowOffsets.get(index), tmp, 0, tmp.length);
+            tmpRowOffsets.add(index+1, tmpRowOffsets.get(index) + LengthCodeBinaryType.getLength(tmp));
+            offset = tmpRowOffsets.get(index+1);
+            index++;
+        }
+        rowOffsets = new int[tmpRowOffsets.size()];
+        for(int i = 0; i < tmpRowOffsets.size(); ++i)
+            rowOffsets[i] = tmpRowOffsets.get(i);
     }
 
     /**
@@ -54,7 +71,8 @@ public class RowDataPacket extends BasePacket {
      */
     public LengthCodeStringType[] getRowData() {
         LengthCodeStringType[] rowDataArray = new LengthCodeStringType[rowOffsets.length-1];
-
+        ArrayList tmpOffset = new ArrayList();
+        tmpOffset.add(0);
         for(int index = 0; index < rowDataArray.length; ++index) {
             rowDataArray[index] = getRowDataByIndex(index);
         }
@@ -93,9 +111,21 @@ public class RowDataPacket extends BasePacket {
         }
         System.out.println();
 
-        System.out.println(LengthCodeStringType.getString(rowDataPacket.getRowDataByIndex(0)));
-        System.out.println(LengthCodeStringType.getString(rowDataPacket.getRowDataByIndex(1)));
-        System.out.println(LengthCodeStringType.getString(rowDataPacket.getRowDataByIndex(2)));
+        /* 通过byte[]构建 */
+        RowDataPacket rowDataPacketCopy = new RowDataPacket(rowDataPacket.getSize());
+        byte[] data = new byte[rowDataPacket.getSize()];
+        rowDataPacket.getData(data);
+        rowDataPacketCopy.setData(data);
+
+        System.out.println();
+        System.out.println(rowDataPacketCopy);
+
+        rowDataArrayRes = rowDataPacketCopy.getRowData();
+        for(LengthCodeStringType rowData : rowDataArrayRes) {
+            System.out.print(LengthCodeStringType.getString(rowData) + " ");
+        }
+        System.out.println();
+
 
     }
     /* Output:

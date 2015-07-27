@@ -165,8 +165,27 @@ public class ErrorPacket extends BasePacket {
         System.out.println("Server Status     : " + IntegerType.getIntegerValue(errorPacket.getServerStatus()));
         System.out.println("Error Message     : " + LengthCodeStringType.getString(errorPacket.getErrorMessage()));
 
+        /* 通过byte[]构建 */
+        ErrorPacket errorPacketCopy = new ErrorPacket(errorPacket.getSize());
+        byte[] data = new byte[errorPacket.getSize()];
+        errorPacket.getData(data);
+        errorPacketCopy.setData(data);
+
+        System.out.println();
+        System.out.println(errorPacketCopy);
+        System.out.println("Packet Identifier : " + IntegerType.getIntegerValue(errorPacketCopy.getPacketIdentifier()));
+        System.out.println("Error Code        : " + IntegerType.getIntegerValue(errorPacketCopy.getErrorCode()));
+        System.out.println("Server Status     : " + IntegerType.getIntegerValue(errorPacketCopy.getServerStatus()));
+        System.out.println("Error Message     : " + LengthCodeStringType.getString(errorPacketCopy.getErrorMessage()));
+
     }
     /* Output:
+    [-1, 0, 0, 1, -12, 12, 83, 69, 82, 86, 69, 82, 32, 69, 82, 82, 79, 82]
+    Packet Identifier : 255
+    Error Code        : 0
+    Server Status     : 500
+    Error Message     : SERVER ERROR
+
     [-1, 0, 0, 1, -12, 12, 83, 69, 82, 86, 69, 82, 32, 69, 82, 82, 79, 82]
     Packet Identifier : 255
     Error Code        : 0

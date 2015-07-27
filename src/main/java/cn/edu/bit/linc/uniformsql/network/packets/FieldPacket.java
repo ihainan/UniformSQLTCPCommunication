@@ -185,6 +185,10 @@ public class FieldPacket extends BasePacket{
      * @return 数据域
      */
     public LengthCodeStringType getDataField() {
+        byte[] tmp = new byte[_data_.length - OFFSET_DATA_FIELD];
+        System.arraycopy(_data_, OFFSET_DATA_FIELD, tmp, 0, tmp.length);
+        dataLen = LengthCodeStringType.getLength(tmp);
+
         byte[] data = new byte[dataLen];
         System.arraycopy(_data_, OFFSET_DATA_FIELD, data, 0, data.length);
         return LengthCodeStringType.getLengthCodeBinaryTypeUsingData(data);
@@ -208,6 +212,10 @@ public class FieldPacket extends BasePacket{
      * @return 数据库名称
      */
     public LengthCodeStringType getDatabaseName() {
+        byte[] tmp = new byte[_data_.length - dataLen - OFFSET_DATABASE_NAME_MINUS_DATA_LENGTH];
+        System.arraycopy(_data_, dataLen + OFFSET_DATABASE_NAME_MINUS_DATA_LENGTH, tmp, 0, tmp.length);
+        databaseLen = LengthCodeStringType.getLength(tmp);
+
         byte[] data = new byte[databaseLen];
         System.arraycopy(_data_, dataLen + OFFSET_DATABASE_NAME_MINUS_DATA_LENGTH, data, 0, data.length);
         return LengthCodeStringType.getLengthCodeBinaryTypeUsingData(data);
@@ -231,6 +239,10 @@ public class FieldPacket extends BasePacket{
      * @return 数据表别名
      */
     public LengthCodeStringType getTableAliasName() {
+        byte[] tmp = new byte[_data_.length - dataLen - databaseLen - OFFSET_TABLE_ALIAS_NAME_NIMUS_DATABASE_LENGTH];
+        System.arraycopy(_data_, dataLen + databaseLen + OFFSET_TABLE_ALIAS_NAME_NIMUS_DATABASE_LENGTH, tmp, 0, tmp.length);
+        tableAliasLen = LengthCodeStringType.getLength(tmp);
+
         byte[] data = new byte[tableAliasLen];
         System.arraycopy(_data_, dataLen + databaseLen + OFFSET_TABLE_ALIAS_NAME_NIMUS_DATABASE_LENGTH, data, 0, data.length);
         return LengthCodeStringType.getLengthCodeBinaryTypeUsingData(data);
@@ -254,6 +266,10 @@ public class FieldPacket extends BasePacket{
      * @return 数据表名
      */
     public LengthCodeStringType getTableName() {
+        byte[] tmp = new byte[_data_.length - dataLen - databaseLen - tableAliasLen - OFFSET_TABLE_NAME_NIMUS_TABLE_ALIAS_LENGTH];
+        System.arraycopy(_data_, dataLen + databaseLen + tableAliasLen + OFFSET_TABLE_NAME_NIMUS_TABLE_ALIAS_LENGTH, tmp, 0, tmp.length);
+        tableLen = LengthCodeStringType.getLength(tmp);
+
         byte[] data = new byte[tableLen];
         System.arraycopy(_data_, dataLen + databaseLen + tableAliasLen + OFFSET_TABLE_NAME_NIMUS_TABLE_ALIAS_LENGTH, data, 0, data.length);
         return LengthCodeStringType.getLengthCodeBinaryTypeUsingData(data);
@@ -277,6 +293,10 @@ public class FieldPacket extends BasePacket{
      * @return 字段别名
      */
     public LengthCodeStringType getFieldAliasName() {
+        byte[] tmp = new byte[_data_.length - dataLen - databaseLen - tableAliasLen - tableLen - OFFSET_FIELD_ALIAS_NAME_NIMUS_TABLE_LENGTH];
+        System.arraycopy(_data_, dataLen + databaseLen + tableAliasLen + tableLen + OFFSET_FIELD_ALIAS_NAME_NIMUS_TABLE_LENGTH, tmp, 0, tmp.length);
+        fieldAliasLen = LengthCodeStringType.getLength(tmp);
+
         byte[] data = new byte[fieldAliasLen];
         System.arraycopy(_data_, dataLen + databaseLen + tableAliasLen + tableLen + OFFSET_FIELD_ALIAS_NAME_NIMUS_TABLE_LENGTH, data, 0, data.length);
         return LengthCodeStringType.getLengthCodeBinaryTypeUsingData(data);
@@ -300,6 +320,10 @@ public class FieldPacket extends BasePacket{
      * @return 字段名
      */
     public LengthCodeStringType getFieldName() {
+        byte[] tmp = new byte[_data_.length - dataLen - databaseLen - tableAliasLen - tableLen - fieldAliasLen - OFFSET_FIELD_NAME_NIMUS_FIELD_ALIAS_LENGTH];
+        System.arraycopy(_data_, dataLen + databaseLen + tableAliasLen + tableLen + fieldAliasLen + OFFSET_FIELD_NAME_NIMUS_FIELD_ALIAS_LENGTH, tmp, 0, tmp.length);
+        fieldLen = LengthCodeStringType.getLength(tmp);
+
         byte[] data = new byte[fieldLen];
         System.arraycopy(_data_, dataLen + databaseLen + tableAliasLen + tableLen + fieldAliasLen + OFFSET_FIELD_NAME_NIMUS_FIELD_ALIAS_LENGTH, data, 0, data.length);
         return LengthCodeStringType.getLengthCodeBinaryTypeUsingData(data);
@@ -477,6 +501,10 @@ public class FieldPacket extends BasePacket{
      * @return 默认值
      */
     public LengthCodeStringType getDefaultValue() {
+        byte[] tmp = new byte[_data_.length - dataLen - databaseLen - tableAliasLen - tableLen - fieldAliasLen - fieldLen - OFFSET_DEFAULT_VALUE_MINUS_FIELD_LENGTH];
+        System.arraycopy(_data_, dataLen + databaseLen + tableAliasLen + tableLen + fieldAliasLen + fieldLen + OFFSET_DEFAULT_VALUE_MINUS_FIELD_LENGTH, tmp, 0, tmp.length);
+        defaultValueLen = LengthCodeStringType.getLength(tmp);
+
         byte[] data = new byte[defaultValueLen];
         System.arraycopy(_data_, dataLen + databaseLen + tableAliasLen + tableLen + fieldAliasLen + fieldLen + OFFSET_DEFAULT_VALUE_MINUS_FIELD_LENGTH, data, 0, data.length);
         return LengthCodeStringType.getLengthCodeBinaryTypeUsingData(data);
@@ -536,8 +564,47 @@ public class FieldPacket extends BasePacket{
         System.out.println("Reserved Field      : " + IntegerType.getIntegerValue(fieldPacket.getReservedField()));
         System.out.println("Default Value       : " + LengthCodeStringType.getString(fieldPacket.getDefaultValue()));
 
+         /* 通过byte[]构建 */
+        FieldPacket fieldPacketCopy = new FieldPacket(fieldPacket.getSize());
+        byte[] data = new byte[fieldPacket.getSize()];
+        fieldPacket.getData(data);
+        fieldPacketCopy.setData(data);
+        System.out.println();
+
+        System.out.println(fieldPacketCopy);
+        System.out.println("Data Field          : " + LengthCodeStringType.getString(fieldPacketCopy.getDataField()));
+        System.out.println("Database Name       : " + LengthCodeStringType.getString(fieldPacketCopy.getDatabaseName()));
+        System.out.println("Table Alias Name    : " + LengthCodeStringType.getString(fieldPacketCopy.getTableAliasName()));
+        System.out.println("Table Name          : " + LengthCodeStringType.getString(fieldPacketCopy.getTableName()));
+        System.out.println("Field Alias Name    : " + LengthCodeStringType.getString(fieldPacketCopy.getFieldAliasName()));
+        System.out.println("Field Name          : " + LengthCodeStringType.getString(fieldPacketCopy.getFieldName()));
+        System.out.println("Fill Number         : " + IntegerType.getIntegerValue(fieldPacketCopy.getFillNumber()));
+        System.out.println("Character Set       : " + IntegerType.getIntegerValue(fieldPacketCopy.getCharacterSet()));
+        System.out.println("Field Length        : " + IntegerType.getIntegerValue(fieldPacketCopy.getFieldLength()));
+        System.out.println("Field Type Code     : " + IntegerType.getIntegerValue(fieldPacketCopy.getFieldTypeCode()));
+        System.out.println("Field Flag Bit Mask : " + IntegerType.getIntegerValue(fieldPacketCopy.getFieldFlagBitMask()));
+        System.out.println("Decimal Point Pre   : " + IntegerType.getIntegerValue(fieldPacketCopy.getDecimalPointPrecision()));
+        System.out.println("Reserved Field      : " + IntegerType.getIntegerValue(fieldPacketCopy.getReservedField()));
+        System.out.println("Default Value       : " + LengthCodeStringType.getString(fieldPacketCopy.getDefaultValue()));
+
     }
     /* Output:
+    [3, 100, 101, 102, 8, 68, 65, 84, 65, 66, 65, 83, 69, 16, 84, 65, 66, 76, 69, 32, 65, 76, 73, 65, 83, 32, 78, 65, 77, 69, 10, 84, 65, 66, 76, 69, 32, 78, 65, 77, 69, 16, 70, 73, 69, 76, 68, 32, 65, 76, 73, 65, 83, 32, 78, 65, 77, 69, 10, 70, 73, 69, 76, 68, 32, 78, 65, 77, 69, -64, 0, 0, 0, 15, 66, 64, 3, 0, 2, 1, 0, 0, 13, 68, 69, 70, 65, 85, 76, 84, 32, 86, 65, 76, 85, 69]
+    Data Field          : def
+    Database Name       : DATABASE
+    Table Alias Name    : TABLE ALIAS NAME
+    Table Name          : TABLE NAME
+    Field Alias Name    : FIELD ALIAS NAME
+    Field Name          : FIELD NAME
+    Fill Number         : 192
+    Character Set       : 0
+    Field Length        : 1000000
+    Field Type Code     : 3
+    Field Flag Bit Mask : 2
+    Decimal Point Pre   : 1
+    Reserved Field      : 0
+    Default Value       : DEFAULT VALUE
+
     [3, 100, 101, 102, 8, 68, 65, 84, 65, 66, 65, 83, 69, 16, 84, 65, 66, 76, 69, 32, 65, 76, 73, 65, 83, 32, 78, 65, 77, 69, 10, 84, 65, 66, 76, 69, 32, 78, 65, 77, 69, 16, 70, 73, 69, 76, 68, 32, 65, 76, 73, 65, 83, 32, 78, 65, 77, 69, 10, 70, 73, 69, 76, 68, 32, 78, 65, 77, 69, -64, 0, 0, 0, 15, 66, 64, 3, 0, 2, 1, 0, 0, 13, 68, 69, 70, 65, 85, 76, 84, 32, 86, 65, 76, 85, 69]
     Data Field          : def
     Database Name       : DATABASE

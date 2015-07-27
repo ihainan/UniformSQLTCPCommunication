@@ -66,7 +66,7 @@ public class ResultSetPacket extends BasePacket {
     /**
      * 设置结果集报文头
      *
-     * @param resultHeadPacket 行数据数组
+     * @param resultHeadPacket 结果集报文头
      */
     public void setResultHeadPacket(ResultHeadPacket resultHeadPacket) {
         byte[] bytes = new byte[resultHeadPacket.getSize()];
@@ -304,6 +304,27 @@ public class ResultSetPacket extends BasePacket {
         }
 
         EOFPacket eofPacket2Get = resultSetPacket.getEOFPacket2();
+        System.out.println("EOFPacket2 : " + eofPacket2Get);
+
+
+        /* 解析内容 */
+        System.out.println();
+        System.out.println("resultHeadPacket : " + resultHeadPacketGet);
+
+        System.out.println();
+        for(FieldPacket fieldPacketGet : fieldPacketArrayGet) {
+            System.out.println("fieldPacket : " + fieldPacketGet);
+        }
+
+        System.out.println();
+        System.out.println("EOFPacket1 : " + eofPacket1Get);
+
+        System.out.println();
+        for(RowDataPacket rowDataPacketGet : rowDataPacketArrayGet) {
+            System.out.println("rowDataPacket : " + rowDataPacketGet);
+        }
+
+        System.out.println();
         System.out.println("EOFPacket2 : " + eofPacket2Get);
 
     }

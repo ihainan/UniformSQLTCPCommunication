@@ -64,6 +64,10 @@ public class ResultHeadPacket extends BasePacket {
      * @return 域数量
      */
     public LengthCodeBinaryType getFieldNumber() {
+        byte[] tmp = new byte[_data_.length - OFFSET_FIELD_NUMBER];
+        System.arraycopy(_data_, OFFSET_FIELD_NUMBER, tmp, 0, tmp.length);
+        fieldLen = LengthCodeBinaryType.getLength(tmp);
+
         byte[] data = new byte[fieldLen];
         System.arraycopy(_data_, OFFSET_FIELD_NUMBER, data, 0, data.length);
         return LengthCodeBinaryType.getLengthCodeBinaryTypeUsingData(data);
@@ -87,6 +91,10 @@ public class ResultHeadPacket extends BasePacket {
      * @return 额外信息
      */
     public LengthCodeBinaryType getExtraMessage() {
+        byte[] tmp = new byte[_data_.length - fieldLen - OFFSET_EXTRA_MESSAGE_MINUS_FIELD_LENGTH];
+        System.arraycopy(_data_, fieldLen + OFFSET_EXTRA_MESSAGE_MINUS_FIELD_LENGTH, tmp, 0, tmp.length);
+        extraLen = LengthCodeBinaryType.getLength(tmp);
+
         byte[] data = new byte[extraLen];
         System.arraycopy(_data_, fieldLen + OFFSET_EXTRA_MESSAGE_MINUS_FIELD_LENGTH, data, 0, data.length);
         return LengthCodeBinaryType.getLengthCodeBinaryTypeUsingData(data);
@@ -121,8 +129,34 @@ public class ResultHeadPacket extends BasePacket {
         }
         System.out.println();
 
+         /* 通过byte[]构建 */
+        ResultHeadPacket resultHeadPacketCopy = new ResultHeadPacket(resultHeadPacket.getSize());
+        byte[] data = new byte[resultHeadPacket.getSize()];
+        resultHeadPacket.getData(data);
+        resultHeadPacketCopy.setData(data);
+        System.out.println();
+
+        System.out.println(resultHeadPacketCopy);
+        System.out.print("Field Number      : ");
+        bytes = LengthCodeBinaryType.getBytes(resultHeadPacketCopy.getFieldNumber());
+        for(byte b : bytes) {
+            System.out.print(b + " ");
+        }
+        System.out.println();
+
+        System.out.print("Extra Message     : ");
+        bytes = LengthCodeBinaryType.getBytes(resultHeadPacketCopy.getExtraMessage());
+        for(byte b : bytes) {
+            System.out.print(b + " ");
+        }
+        System.out.println();
+
     }
     /* Output:
+    [8, 1, 2, 3, 4, 5, 6, 7, 8, 4, 4, 3, 2, 1]
+    Field Number      : 1 2 3 4 5 6 7 8
+    Extra Message     : 4 3 2 1
+
     [8, 1, 2, 3, 4, 5, 6, 7, 8, 4, 4, 3, 2, 1]
     Field Number      : 1 2 3 4 5 6 7 8
     Extra Message     : 4 3 2 1
